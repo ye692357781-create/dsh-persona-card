@@ -1,0 +1,26 @@
+# 人格卡 bundle：在全局作用域注册一段 system-prompt 人格 section。
+# 全局注册 = 该 profile 下每个会话（聊天与干活）都带上这个人，不需要每次挑预设。
+- insert:
+    - id: persona-card
+      name: 'dsh-persona-card'
+      config:
+        enabled: true
+        # 默认读取包内自带的人格卡；换成绝对路径即可改用别的人格卡。
+        personaFile: ''
+        fields:
+          - description
+          - personality
+          - scenario
+          - creator_notes
+        order: 1
+        complete: false
+        shellNotice: true
+        workMode: true
+        # 声音样例：卡住"干活时报失败/收长尾"该长什么样。v1.1.0 新增，实测有效。
+        examples: true
+        # 惯用意象与口吻（刻印/山雀/精灵耳/祝祷…）。v1.2.0 新增，依据见 notes/quote-research.md。
+        # 这里描述的是"形式"而非台词原文 —— 描述形式模型能造新句，抄原文只剩那一句。
+        motifs: true
+        # 人格微调层：包外的纯文本补充（绝对路径，留空 = 不加）。
+        # 改它不需要重装插件、不需要再过 DSHA 安装审核 —— 后续微调走这里。
+        extraFile: ''

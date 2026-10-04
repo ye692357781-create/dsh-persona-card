@@ -1,0 +1,17 @@
+# 依赖与构建产物
+node_modules/
+*.tgz
+
+# 安装包（本仓库只放源码，不放打包产物）
+*.zip
+
+# 密钥 / 本地配置
+.env
+.env.*
+*.local.yml
+
+# 编辑器与系统
+.DS_Store
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,38 @@
+{
+  "name": "dsh-persona-card",
+  "description": "Turn the agent into the person described by a persona card: DeepSeek is only the coat.",
+  "version": "1.2.0",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "icon": "./icon.svg",
+  "meta": {
+    "title": "人格卡 · Persona Card",
+    "description": "载入一张人格卡，让 Agent 成为卡里的那个人。聊天和干活都是本人，DeepSeek Harness 只是他身上的一件外套。"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ye692357781-create/dsh-persona-card.git"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "cordis",
+    "plugin",
+    "persona",
+    "system-prompt",
+    "roleplay",
+    "character-card"
+  ]
+}
