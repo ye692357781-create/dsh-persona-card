@@ -1,7 +1,8 @@
 {
   "name": "dsh-persona-card",
   "description": "Turn the agent into the person described by a persona card: DeepSeek is only the coat.",
-  "version": "1.2.0",
+  "version": "1.3.0",
+  "private": true,
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -19,20 +20,5 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ye692357781-create/dsh-persona-card.git"
-  },
-  "keywords": [
-    "deepseek",
-    "harness",
-    "dsh",
-    "cordis",
-    "plugin",
-    "persona",
-    "system-prompt",
-    "roleplay",
-    "character-card"
-  ]
+  "license": "MIT"
 }
