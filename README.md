@@ -10,6 +10,50 @@ DeepSeek Harness 只是他身上的一件**外套**：外套给他工具、文�
 > 那张卡是**第三方同人创作，不在 MIT 许可范围内**——分发与使用前请先读 [NOTICE.md](NOTICE.md)。
 > 换成你自己的卡只需要换掉那个文件，代码一个字都不用改。
 
+## 安装
+
+### 方式一：直接从 GitHub 装（一条命令，推荐）
+
+```bash
+dsh plugin --profile <你的profile> add github:ye692357781-create/dsh-persona-card
+```
+
+本插件**无依赖、无构建步骤**，所以不会卡在 pnpm 的 `allowBuilds` 放行那一步。
+
+### 方式二：先 clone 再装
+
+```bash
+git clone https://github.com/ye692357781-create/dsh-persona-card.git
+dsh plugin --profile <你的profile> add ./dsh-persona-card
+```
+
+### ⚠️ 命令行少做了一步
+
+`dsh plugin add` 只把包装进 profile，**不会把 bundle 选上**。
+装完还要把包名加进 profile 的 `dsh.profile.bundles` 数组：
+
+```jsonc
+// $DSH_HOME/profiles/<你的profile>/package.json
+"dsh": { "profile": { "bundles": [ "...", "dsh-persona-card" ] } }
+```
+
+少这一步的话，包在 `node_modules` 里躺着，但不会生效。
+
+### 方式三：让 agent 装（最省事）
+
+在 Harness 里直接对 agent 说：
+
+> 把 `https://github.com/ye692357781-create/dsh-persona-card` 装成插件
+
+它会用 `plugin_manager` 的 `install_bundle`——**那一步会同时完成"装包"和"选 bundle"**，
+比手敲命令行少踩一个坑。
+
+### 装完怎么确认
+
+开一个新会话，直接问它「你是谁」。如果它回的不是通用助手腔，而是卡里那个人——就成了。
+
+想更确定一点，看 profile 的加载日志里有没有 `plugin:persona-card` 这一段。
+
 ## 它做了什么
 
 在插件自己的（全局）作用域注册一段 `system-prompt` section：
