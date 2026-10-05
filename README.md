@@ -20,6 +20,16 @@ dsh plugin --profile <你的profile> add github:ye692357781-create/dsh-persona-c
 
 本插件**无依赖、无构建步骤**，所以不会卡在 pnpm 的 `allowBuilds` 放行那一步。
 
+> ⚠️ **上面这条装的是默认分支的最新提交**，不是某个发布版。
+> 想钉住一个验证过的版本，在末尾加 `#<tag>`：
+>
+> ```bash
+> dsh plugin --profile <你的profile> add github:ye692357781-create/dsh-persona-card#v1.4.0
+> ```
+>
+> 可用版本见[标签页](https://github.com/ye692357781-create/dsh-persona-card/tags)。
+> **本仓库的每个版本都会打附注 tag**；钉版本装能让你在作者继续提交时保持在原处不动。
+
 ### 方式二：先 clone 再装
 
 ```bash
