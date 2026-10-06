@@ -7,6 +7,16 @@
         enabled: true
         # 默认读取包内自带的人格卡；换成绝对路径即可改用别的人格卡。
         personaFile: ''
+        # 用包内哪一张卡（对应 persona/<名字>.json，不用写后缀）：
+        #   elysia   爱莉希雅             （默认）
+        #   cyrene   昔涟
+        #   together 爱莉希雅与昔涟 —— 两个人同框，各自署名
+        #
+        # ★ 这一项必须显式。v2.3.0 往包里放了第二张卡之后，
+        #   原本"扫目录取第一张"的逻辑会按字母序挑中 cyrene.json（c < e），
+        #   等于**悄悄换掉默认人格**——没人动过配置，人就换了。
+        #   顺序不该决定我是谁。
+        card: 'elysia'
         fields:
           - description
           - personality
