@@ -87,6 +87,25 @@ check(
 )
 
 console.log()
+console.log('  ── 钟点：问"现在几点"必须答得出、且答得对 ──')
+
+// v1.9.0：心情那一节要带上具体的钟点。
+// 光有"黄昏"是不够的——被问"现在几点"时，那答不出一个数。
+const zh = renderMood(initialState(T.utc09), T.utc09, { timeZone: 'Asia/Shanghai' })
+check('上海：出现钟点 17:00', zh.includes('17:00'), true)
+check('上海：出现日期 10月6日', zh.includes('10月6日'), true)
+check('上海：出现星期 周二', zh.includes('周二'), true)
+
+const utc = renderMood(initialState(T.utc09), T.utc09, { timeZone: 'UTC' })
+check('UTC：出现钟点 09:00', utc.includes('09:00'), true)
+check('UTC 与上海判出的钟点不同', zh.includes('17:00') && utc.includes('09:00'), true)
+
+// 跨日：23:00 UTC = 上海第二天 07:00
+const dc = renderMood(initialState(T.utc23), T.utc23, { timeZone: 'Asia/Shanghai' })
+check('跨日：上海是 10月7日 07:00', dc.includes('10月7日') && dc.includes('07:00'), true)
+check('跨日：UTC 仍是 10月6日 23:00', renderMood(initialState(T.utc23), T.utc23, { timeZone: 'UTC' }).includes('10月6日'), true)
+
+console.log()
 console.log(`  通过 ${pass} / ${pass + fail}`)
 if (fail) {
   console.log()
