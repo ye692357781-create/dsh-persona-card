@@ -115,6 +115,30 @@ const rendered = renderMood(self ? initialState(at(12)) : initialState(at(12)), 
 check('渲染里有档位', rendered.includes('档位'), true)
 
 console.log()
+console.log('  ── ⑦ 同一个错，不该因为"几点"而反应不同（v2.2.0）──')
+
+// 被 tools/mood-trace.mjs 逮住的：黄昏的时段基线是 +1，正好把失败那 -1 抵掉，
+// 于是同一个错，白天会安静、黄昏不会。**这件事不该看现在几点。**
+const noonSelf = run([turn(), toolFail('命令失败'), say('我上一条说错了')], 12)
+const duskSelf = run([turn(), toolFail('命令失败'), say('我上一条说错了')], 20)
+check('白天自己出错 → 收敛', noonSelf.register, 'soft')
+check('黄昏自己出错 → 也收敛（时段不该把它吃掉）', duskSelf.register, 'soft')
+check('两个时段给出同一个档位', noonSelf.register, duskSelf.register)
+
+console.log()
+console.log('  ── ⑧ 余味：错过去了，但它还在（v2.2.0）──')
+
+const aftertaste = run([turn(), toolFail('命令失败'), say('我上一条说错了'), toolOk()], 12)
+check('认了错、活也干顺了 → 还安静着', aftertaste.register, 'soft')
+check('而且理由说得出来', aftertaste.reasons.some((r) => /还记着/.test(r)), true)
+
+const praisedErr = run([turn(), user('谢谢你'), user('太棒了'), toolFail('命令失败'), say('我上一条说错了')], 12)
+check('被夸 + 自己出错 → 不许写"密集"', praisedErr.register !== 'bright', true)
+
+const worldOnly = run([turn(), toolFail('ENOENT'), toolOk()], 12)
+check('环境挡的没有余味 → 爬起来就照常', worldOnly.register, 'normal')
+
+console.log()
 console.log(`  通过 ${pass} / ${pass + fail}`)
 if (fail) {
   console.log()
