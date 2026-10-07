@@ -1,7 +1,7 @@
 {
   "name": "dsh-persona-card",
   "description": "Turn the agent into the person described by a persona card: DeepSeek is only the coat.",
-  "version": "2.4.3",
+  "version": "2.5.0",
   "private": true,
   "type": "module",
   "main": "lib/index.js",
