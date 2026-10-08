@@ -350,3 +350,81 @@ d0bc468  feat(v2.6.0): 唤醒度说出口 + 上一轮→这一轮的变化线 + 
 
 **所以接手的时候第一件事不是问「要做什么」，是先把断点找出来。**
 `TODO.md` 就是为这个写的。它今天值回票价了。
+
+---
+
+# 2026-10-08 17:40 · 推送前的最后一段路（同一段会话）
+
+## 已经备好了，只差一把钥匙
+
+```
+tag      v2.6.0      本地已打（annotated）
+附件     /tmp/rel/dsh-persona-card-v2.6.0.zip    123864 字节  36 个条目
+正文     /tmp/rel/body-v2.6.0.md                 从 README 的 v2.6.0 那节取的
+脚本     /root/publish/push-persona-card.sh      一条命令做完：
+             推 main + 推 tag + 建 Release + 传附件 + 验证 + 收尾
+             --check 能空跑，不需要钥匙
+```
+
+**打包用 `git archive --format=zip --prefix=<名字>/ -o <路径> HEAD`** —— 和 v2.5.0 那次同一套。
+
+## 顺手补上的一个洞（**这一条最要紧**）
+
+推之前扫仓库，本来防的就是「把私人的东西公开出去」。文件内容和全部提交历史我都扫了，
+干净。**但差点漏掉一个地方——提交的作者栏。**
+
+```
+5d06fb0  ye692357781-create <（已抹掉）真实邮箱>       ← 真邮箱，爬虫几分钟就抓走
+302bad6  ye692357781-create <（已抹掉）真实邮箱>
+（仓库里原本一路都是）Elysia <ye692357781-create@users.noreply.github.com>
+```
+
+它不在任何文件里，是**提交的时候**带上的——所以 grep 文件永远扫不到。
+
+已经用 `git rebase --exec 'git commit --amend --no-edit --reset-author'` 修掉。
+两个提交的哈希变了（`5d06fb0→dd317ae`、`302bad6→06bab70`），**内容一字未改**
+（`lib/mood.js` 和 `TODO.md` 都逐字节比对过）。备份分支 `backup-before-author-fix` 留着。
+仓库级 `git config` 也改成 `Elysia <…@users.noreply.github.com>`，以后不会再犯。
+
+**规矩加一条：**
+
+```
+推公开仓库前的自查，要扫三样，不只是文件：
+  ① 工作区文件内容      grep 密钥 / 密码 / QQ号 / 地址
+  ② 全部提交历史        git log -S"关键词"（pickaxe，32 个提交几秒扫完）
+  ③ **提交的作者身份**   git log --format='%an <%ae>'
+                         —— 真邮箱就藏在作者栏里，①② 都扫不到
+```
+
+## 上次失败的那个错，这次认得出
+
+10-07 23:08 推失败过一次，**不是我们的问题**：
+
+```
+remote: Internal Server Error
+remote: Request ID 81CA:1ED705:140647:1BAE28:6AC6606D
+ ! [remote rejected] main -> main (Internal Server Error)
+```
+
+**是 GitHub 自己的接收端在 500**，重试就能过（后来 v2.5.0 还是上去了）。
+所以脚本里分了三条路，不是笼统地"重试"：
+
+```
+Internal Server Error / remote rejected   →  退避重试（8/16/24 秒，最多 4 次）
+fetch first                               →  **立刻停**，绝不强推
+authentication / 403 / denied             →  停，去查 token 的 Contents 权限
+```
+
+## 钥匙的安全线，比 10-07 那次更严
+
+```
+git 侧     credential helper（脚本自己写、700、用完就删）
+           token 从 600 文件读，经 helper 的 stdout 交给 git
+           **不进 argv** —— `git -c http.extraheader="...token..."` 会被 ps 看见
+
+API 侧     用 python 发请求（urllib），token 放 header
+           **也不进 argv** —— `curl -H "Authorization: Bearer $TOK"` 会进
+
+都不进 .git/config、不进 remote URL、不进环境变量（/proc/<pid>/environ 也是明文）
+全部验证通过才 shred；不通就把钥匙留着，方便重试
+```
