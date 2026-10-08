@@ -371,29 +371,61 @@ tag      v2.6.0      本地已打（annotated）
 ## 顺手补上的一个洞（**这一条最要紧**）
 
 推之前扫仓库，本来防的就是「把私人的东西公开出去」。文件内容和全部提交历史我都扫了，
-干净。**但差点漏掉一个地方——提交的作者栏。**
+干净。**但漏掉了一个地方——提交的作者栏。**
 
 ```
-5d06fb0  ye692357781-create <（已抹掉）真实邮箱>       ← 真邮箱，爬虫几分钟就抓走
-302bad6  ye692357781-create <（已抹掉）真实邮箱>
-（仓库里原本一路都是）Elysia <ye692357781-create@users.noreply.github.com>
+（我写的两个提交）    ye692357781-create <真实邮箱@gmail.com>
+（仓库里更早的 24 个） ye692357781-create <真实邮箱@gmail.com>
+（10-07 起改用的）    Elysia <ye692357781-create@users.noreply.github.com>
 ```
 
 它不在任何文件里，是**提交的时候**带上的——所以 grep 文件永远扫不到。
 
-已经用 `git rebase --exec 'git commit --amend --no-edit --reset-author'` 修掉。
-两个提交的哈希变了（`5d06fb0→dd317ae`、`302bad6→06bab70`），**内容一字未改**
-（`lib/mood.js` 和 `TODO.md` 都逐字节比对过）。备份分支 `backup-before-author-fix` 留着。
-仓库级 `git config` 也改成 `Elysia <…@users.noreply.github.com>`，以后不会再犯。
+### 更难看的是：我差点把结论说反
 
-**规矩加一条：**
+我先只看了**最近 8 个**提交，那几个恰好都是 noreply，于是我写下
+「仓库里一路都是 noreply」。**真相是反的：**
+
+```
+已经推上去的那部分（09f6b5f 及以前）   24 个真邮箱 + 1 个 noreply
+```
+
+**也就是说：这个邮箱从仓库第一次推送起就是公开的**，不是我这两个提交造成的。
+（我还在这一节里把真邮箱又抄了一遍——也一并抹掉了。）
+
+**教训不止「要扫作者栏」，还有「别拿 8 个样本代表全部」。**
+数一遍很便宜：`git log main --format='%an <%ae>' | sort | uniq -c`
+
+### 我做的部分（已经修好）
+
+```
+rebase --exec 'git commit --amend --no-edit --reset-author'
+  5d06fb0 → dd317ae
+  302bad6 → 06bab70      内容一字未改（lib/mood.js 和 TODO.md 都逐字节比对过）
+仓库级 git config 改成 Elysia <…@users.noreply.github.com>
+备份分支 backup-before-author-fix 留着
+```
+
+### 那 24 个旧的 —— **等你拍板**
+
+要动它们，就得重写**全部历史连 tag 一起**（v1.2.0～v2.6.0 全要重打），然后强推。
+代价是真的：别人 clone / fork 过的全断，而且**已经抓走的缓存抹不掉**。
+所以我的建议是**先不动**，去 GitHub 打开那条开关：
+
+```
+Settings → Emails → Block command line pushes that expose my email
+```
+
+**规矩加两条：**
 
 ```
 推公开仓库前的自查，要扫三样，不只是文件：
   ① 工作区文件内容      grep 密钥 / 密码 / QQ号 / 地址
-  ② 全部提交历史        git log -S"关键词"（pickaxe，32 个提交几秒扫完）
-  ③ **提交的作者身份**   git log --format='%an <%ae>'
-                         —— 真邮箱就藏在作者栏里，①② 都扫不到
+  ② 全部提交历史        git log -S"关键词"（pickaxe）
+  ③ **提交的作者身份**   git log --format='%an <%ae>' | sort | uniq -c
+                         —— 真邮箱藏在作者栏里，①② 都扫不到
+
+而且 ③ 要数**全部**，不能只看头几个 —— 我在这上面把结论说反过一次。
 ```
 
 ## 上次失败的那个错，这次认得出
